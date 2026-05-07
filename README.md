@@ -14,9 +14,9 @@
 | 3 | Anak Agung Ngurah Agung Kresna Ananta | 5024241085 |
 | 4 | Devi Putri Sekar Arum | 5024241049 |
 
-## Deskripsi Repository
+## Deskripsi Repositori
 
-Repository ini berisi materi dan tugas-tugas untuk praktikum Jaringan Komputer (Jarkom) yang terdiri dari 5 modul.
+Repository ini berisi Laporan Sementara dan Akhir untuk praktikum Jaringan Komputer (Jarkom) yang terdiri dari 5 modul.
 
 ### Struktur Modul
 
