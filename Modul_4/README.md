@@ -49,7 +49,7 @@ Simulasi dibangun di atas platform **PNETLab** dengan perangkat-perangkat beriku
   192.168.10.10
 ```
 
-![Topologi Jaringan PNETLab](img/1__gambar_topologi.png)
+![Topologi Jaringan Lengkap](gambar/1.%20gambar%20topologi.png)
 
 > *Gambar: Topologi jaringan lengkap pada PNETLab — tampak MikroTik ISP (atas), FortiGate sebagai firewall utama (tengah), Cisco vIOS sebagai router internal, Ubuntu Linux sebagai web server DMZ, dan dua TinyCore Linux sebagai client LAN dan WAN.*
 
@@ -104,7 +104,7 @@ MikroTik dikonfigurasi sebagai ISP yang menghubungkan jaringan simulasi ke inter
 chain=srcnat  action=masquerade  out-interface=ether1
 ```
 
-![Konfigurasi MikroTik ISP](img/3_4_cek_konfigurasi_mikrotik.png)
+![Konfigurasi MikroTik ISP](gambar/3.4%20cek%20konfigurasi%20mikrotik.png)
 
 > *Screenshot: Output perintah `/ip address print`, `/ip route print`, dan `/ip firewall nat print` pada terminal MikroTik ISP. Terlihat seluruh IP address, routing table statis dan dinamis, serta aturan NAT masquerade telah terkonfigurasi dengan benar.*
 
@@ -137,7 +137,7 @@ config router static
     set device "port2"
 ```
 
-![Konfigurasi Interface dan Static Route FortiGate](img/3__fortinet__show_system_interface___show_router_static.png)
+![Konfigurasi Interface dan Static Route FortiGate](gambar/3.(fortinet)%20show%20system%20interface%20%26%20show%20router%20static.png)
 
 > *Screenshot: Output `show system interface` dan `show router static` pada FortiGate. Terlihat konfigurasi IP pada port1 (WAN), port2 (internal), port3 (DMZ), serta static route default dan ke jaringan LAN.*
 
@@ -154,7 +154,7 @@ edit "WAN_Client_Network"
   (jaringan sisi WAN)
 ```
 
-![Firewall Address Object FortiGate](img/3_1__fortinet__show_firewall_address.png)
+![Firewall Address Object FortiGate](gambar/3.1%20(fortinet)%20show%20firewall%20address.png)
 
 > *Screenshot: Output `show firewall address` pada FortiGate. Terlihat address object yang telah didefinisikan untuk LAN_NETWORK, DMZ_Server, dan berbagai object bawaan sistem.*
 
@@ -181,7 +181,7 @@ config firewall vip
     set mappedport 80
 ```
 
-![Firewall Policy dan VIP FortiGate](img/3_2__fortinet__show_firewall_policy_dan_vip.png)
+![Firewall Policy dan VIP FortiGate](gambar/3.2%20(fortinet)%20show%20firewall%20policy%20dan%20vip.png)
 
 > *Screenshot: Output `show firewall policy` dan `show firewall vip` pada FortiGate. Terlihat empat policy aktif beserta konfigurasi VIP yang memetakan port 80 IP publik ke IP DMZ Server.*
 
@@ -207,7 +207,7 @@ interface GigabitEthernet0/1
 ip route 0.0.0.0 0.0.0.0 10.20.20.1     ← default route ke FortiGate
 ```
 
-![Running-config Cisco vIOS](img/3_3_show_running_config_di_vios.png)
+![Running-config Cisco vIOS](gambar/3.3%20show%20running%20config%20di%20vios.png)
 
 > *Screenshot: Output `show running-config` pada Cisco vIOS. Terlihat konfigurasi interface GigabitEthernet0/0 (10.20.20.2/30 ke FortiGate) dan GigabitEthernet0/1 (192.168.10.1/24 ke LAN), serta default route menuju FortiGate.*
 
@@ -243,7 +243,7 @@ $ curl http://192.168.20.10
 Tumod_4_DMZ_Firewall_27-Peer to Peer
 ```
 
-![Konfigurasi Ubuntu Server DMZ](img/3_5_Linux_cek_konfig.png)
+![Konfigurasi Ubuntu Server DMZ](gambar/3.5%20Linux%20cek%20config.png)
 
 > *Screenshot: Terminal Ubuntu Server DMZ menampilkan isi file netplan (IP statis 192.168.20.10/24), output `ip addr show eth0`, status nginx yang aktif berjalan, serta hasil `curl http://192.168.20.10` yang mengembalikan halaman identitas kelompok.*
 
@@ -281,7 +281,7 @@ VPCS> ping 192.168.20.10
 ...
 ```
 
-![Pengujian dari Client LAN](img/4__pengujian_PC_LAN.png)
+![Pengujian dari Client LAN](gambar/4.%20pengujian%20PC%20LAN.png)
 
 > *Screenshot: Terminal TinyCore Linux (Client LAN) menampilkan konfigurasi IP dan hasil ping ke gateway Cisco Router (192.168.10.1 — reply), ke FortiGate internal (10.20.20.1 — reply), dan ke DMZ Server (192.168.20.10 — reply). Semua pengujian berhasil sesuai policy yang dikonfigurasi.*
 
@@ -328,7 +328,7 @@ root@kvm:~# curl http://192.168.20.10
 Tumod_4_DMZ_Firewall_27-Peer to Peer
 ```
 
-![Pengujian dari Client WAN](img/4_2_PING_WAN_.png)
+![Pengujian dari Client WAN](gambar/4.2%20PING%20WAN%20.png)
 
 > *Screenshot: Terminal TinyCore Linux (Client WAN) menampilkan ping ke MikroTik (172.16.100.1 — reply), ke FortiGate WAN (10.10.10.2 — reply), ke Client LAN (192.168.10.10 — timeout), dan ke DMZ Server langsung (192.168.20.10 — timeout). Hasil timeout sesuai ekspektasi karena firewall memblokir akses langsung dari WAN ke jaringan internal.*
 
