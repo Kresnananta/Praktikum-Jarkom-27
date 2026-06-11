@@ -1,9 +1,4 @@
 # Laporan Akhir Praktikum — Firewall & NAT (Tugas Modul)
-
-> **Platform:** PNETLab  
-> **Topik:** Firewall NAT, Firewall Filter, Port Forwarding, DMZ  
-> **Tanggal:** 7 Juni 2026
-
 ---
 
 ## Daftar Isi
