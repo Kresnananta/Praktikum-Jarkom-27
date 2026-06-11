@@ -21,29 +21,6 @@
 ## 1. Topologi Jaringan
 
 Simulasi dibangun di atas platform **PNETLab** dengan perangkat-perangkat berikut yang saling terhubung membentuk tiga zona jaringan: **WAN**, **LAN**, dan **DMZ**.
-
-```
-          [ Internet / Net ]
-                 |
-              eth1 (DHCP)
-           [ MikroTik ISP ]
-         eth2          eth3
-    (10.10.10.1/30)  (172.16.100.1/24)
-          |                  |
-        port1           [ Client WAN ]
-     [ FortiGate ]     172.16.100.10
-    port2     port3
-(10.20.20.1)  (192.168.20.1/24)
-      |               |
-    Gi0/0         [ Ubuntu DMZ ]
-  [ vIOS / Cisco ]   192.168.20.10
-    Gi0/1
-  (192.168.10.1/24)
-      |
-  [ Client LAN ]
-  192.168.10.10
-```
-
 ![Topologi Jaringan Lengkap](gambar/1.%20gambar%20topologi.png)
 
 > *Gambar: Topologi jaringan lengkap pada PNETLab — tampak MikroTik ISP (atas), FortiGate sebagai firewall utama (tengah), Cisco vIOS sebagai router internal, Ubuntu Linux sebagai web server DMZ, dan dua TinyCore Linux sebagai client LAN dan WAN.*
