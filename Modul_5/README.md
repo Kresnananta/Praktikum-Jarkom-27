@@ -1,5 +1,4 @@
 # Laporan Tugas Modul 5
-
 ## Daftar Isi
 
 1. [Topologi Jaringan](#1-topologi-jaringan)
@@ -27,8 +26,7 @@
 
 Simulasi dibangun di atas platform **PNETLab** yang mensimulasikan jaringan enterprise dengan dua lokasi: **HQ Jakarta** dan **Branch Surabaya**, yang saling terhubung melalui **GRE Tunnel** di atas jaringan ISP.
 
-![Topologi Tugas Modul](img/0_topologi.png)
-
+![Topologi](img/0_topologi.png)
 > *Topologi jaringan enterprise menghubungkan HQ Jakarta dan Branch Surabaya melalui GRE Tunnel. Sisi Jakarta menggunakan dual gateway Cisco Router dan MikroTik Router dengan VRRP. Ubuntu Server Jakarta menjalankan ISC-DHCP Server terpusat untuk VLAN 10 dan 20. FortiGate di kedua sisi berfungsi sebagai edge firewall sekaligus GRE endpoint.*
 
 ---
@@ -81,6 +79,45 @@ Simulasi dibangun di atas platform **PNETLab** yang mensimulasikan jaringan ente
 ---
 
 ## 3. Konfigurasi Tiap Perangkat
+
+### 3.0 Cisco Switch Jakarta & Cisco Switch Surabaya
+
+Kedua switch dikonfigurasi untuk membawa VLAN sesuai zona masing-masing. Port ke client dikonfigurasi sebagai access, sedangkan port ke router dikonfigurasi sebagai trunk.
+
+**VLAN Brief — Cisco Switch Jakarta:**
+
+```
+SW-JAKARTA# show vlan brief
+
+VLAN  Name        Status    Ports
+----  ----------  --------- --------------------------------
+1     default     active    Gi1/1, Gi1/2, Gi1/3
+10    FINANCE     active    Gi0/3
+20    IT          active    Gi0/2
+60    SERVER-HQ   active    Gi1/0
+```
+
+![VLAN Brief Cisco Switch Jakarta](img/tumod_vlan_jkt.png)
+
+> *Screenshot: Output `show vlan brief` pada SW-JAKARTA. Terlihat VLAN 10 (FINANCE) aktif di port Gi0/3, VLAN 20 (IT) di port Gi0/2, dan VLAN 60 (SERVER-HQ) di port Gi1/0. Port trunk ke Cisco Router dan MikroTik Router tidak terlihat di sini karena trunk tidak ditampilkan pada output `show vlan brief`.*
+
+**VLAN Brief — Cisco Switch Surabaya:**
+
+```
+SW-SURABAYA# show vlan brief
+
+VLAN  Name        Status    Ports
+----  ----------  --------- --------------------------------
+1     default     active    Gi1/0, Gi1/1, Gi1/2, Gi1/3
+30    SALES       active    Gi0/1
+40    OPERATIONS  active    Gi0/2, Gi0/3
+```
+
+![VLAN Brief Cisco Switch Surabaya](img/tumod_vlan_sby.png)
+
+> *Screenshot: Output `show vlan brief` pada SW-SURABAYA. Terlihat VLAN 30 (SALES) aktif di port Gi0/1 untuk client DHCP, dan VLAN 40 (OPERATIONS) aktif di port Gi0/2 dan Gi0/3 untuk dua client static IP. Port Gi0/0 tidak tampil karena dikonfigurasi sebagai trunk menuju MikroTik Surabaya.*
+
+---
 
 ### 3.1 MikroTik ISP
 
@@ -428,13 +465,20 @@ Setelah GRE Tunnel aktif dan OSPF berhasil mendistribusikan route, pengujian kon
 
 > *Screenshot: VPCS client Jakarta melakukan ping ke 192.168.30.200 (client VLAN 30 Surabaya), 192.168.40.10, dan 192.168.40.20 (client VLAN 40 Surabaya). Ketiga target mendapatkan reply dengan TTL 60 dan RTT antara 3–16 ms, membuktikan jalur GRE Tunnel → OSPF → MikroTik Surabaya berhasil meneruskan traffic lintas-site.*
 
-> *Screenshot ping dari client Surabaya ke Jakarta belum tersedia — akan dilengkapi.*
+**Ping dari Client Surabaya ke Client Jakarta:**
 
-| Sumber           | Tujuan                    | Hasil      | TTL | Keterangan                      |
-|------------------|---------------------------|------------|-----|---------------------------------|
-| Client JKT (VLAN 10) | 192.168.30.200 (SBY VLAN30) | ✅ Reply | 60  | Via GRE Tunnel + OSPF           |
-| Client JKT (VLAN 10) | 192.168.40.10 (SBY VLAN40)  | ✅ Reply | 60  | Via GRE Tunnel + OSPF           |
-| Client JKT (VLAN 10) | 192.168.40.20 (SBY VLAN40)  | ✅ Reply | 60  | Via GRE Tunnel + OSPF           |
+![Ping antar-Site Surabaya ke Jakarta](img/tumod_ping_sby_jkt.png)
+
+> *Screenshot: VPCS client Surabaya melakukan ping ke 192.168.10.101 (client VLAN 10 Jakarta), 192.168.20.100 (client VLAN 20 Jakarta), dan 192.168.60.10 (Ubuntu Server Jakarta). Ketiga target mendapatkan reply dengan TTL 60 dan RTT antara 3–12 ms, membuktikan bahwa jalur balik dari Surabaya → GRE Tunnel → FortiGate Jakarta → jaringan internal Jakarta juga berjalan penuh.*
+
+| Sumber                   | Tujuan                          | Hasil      | TTL | Keterangan               |
+|--------------------------|---------------------------------|------------|-----|--------------------------|
+| Client JKT (VLAN 10)     | 192.168.30.200 (SBY VLAN 30)    | ✅ Reply   | 60  | Via GRE Tunnel + OSPF    |
+| Client JKT (VLAN 10)     | 192.168.40.10  (SBY VLAN 40)    | ✅ Reply   | 60  | Via GRE Tunnel + OSPF    |
+| Client JKT (VLAN 10)     | 192.168.40.20  (SBY VLAN 40)    | ✅ Reply   | 60  | Via GRE Tunnel + OSPF    |
+| Client SBY (VLAN 30/40)  | 192.168.10.101 (JKT VLAN 10)    | ✅ Reply   | 60  | Via GRE Tunnel + OSPF    |
+| Client SBY (VLAN 30/40)  | 192.168.20.100 (JKT VLAN 20)    | ✅ Reply   | 60  | Via GRE Tunnel + OSPF    |
+| Client SBY (VLAN 30/40)  | 192.168.60.10  (Ubuntu Server)  | ✅ Reply   | 60  | Via GRE Tunnel + OSPF    |
 
 ---
 
@@ -483,9 +527,9 @@ Karena VLAN di belakang FortiGate dikonfigurasi sebagai static route (bukan inte
 | OSPF neighbor Jakarta ↔ Surabaya Full       | State Full  | Full/-       | ✅ Sesuai |
 | Route Surabaya muncul di Jakarta (OSPF)     | O E2 192.168.30/40 | Terlihat | ✅ Sesuai |
 | Route Jakarta muncul di Surabaya (OSPF)     | O E2 192.168.10/20/60 | Terlihat | ✅ Sesuai |
-| Ping antar-site Jakarta ke Surabaya         | Reply TTL 60 | Reply      | ✅ Sesuai |
+| Ping antar-site Jakarta ke Surabaya         | Reply TTL 60 | Reply | ✅ Sesuai |
+| Ping antar-site Surabaya ke Jakarta         | Reply TTL 60 | Reply | ✅ Sesuai |
 | Akses web server Jakarta dari Surabaya      | HTML response | HTML diterima | ✅ Sesuai |
-| Ping antar-site Surabaya ke Jakarta         | Reply       | Belum diverifikasi | ⏳ Pending |
 
 ---
 
