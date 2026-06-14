@@ -26,7 +26,7 @@
 
 Simulasi dibangun di atas platform **PNETLab** yang mensimulasikan jaringan enterprise dengan dua lokasi: **HQ Jakarta** dan **Branch Surabaya**, yang saling terhubung melalui **GRE Tunnel** di atas jaringan ISP.
 
-![Topologi](img/0_topologi.png)
+![Topologi](img/tumod_topologi.png)
 > *Topologi jaringan enterprise menghubungkan HQ Jakarta dan Branch Surabaya melalui GRE Tunnel. Sisi Jakarta menggunakan dual gateway Cisco Router dan MikroTik Router dengan VRRP. Ubuntu Server Jakarta menjalankan ISC-DHCP Server terpusat untuk VLAN 10 dan 20. FortiGate di kedua sisi berfungsi sebagai edge firewall sekaligus GRE endpoint.*
 
 ---
